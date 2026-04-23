@@ -5,10 +5,13 @@ from torch import optim
 import csv
 from monai.metrics import DiceMetric
 
-from ..utils.model_utils import load_or_initialize_training, make_dataloader, exp_decay_learning_rate, compute_loss, train_one_epoch
+from ..utils.model_utils import (load_or_initialize_training, make_dataloader, exp_decay_learning_rate, compute_loss,
+                                 train_one_epoch)
 from ..utils.general_utils import seg_to_one_hot_channels, disjoint_to_overlapping, probs_to_preds
 
-def train_with_val(train_data_dir, val_data_dir, model, loss_functions, loss_weights, init_lr, max_epoch, training_regions='overlapping', eval_regions='overlapping', out_dir=None, decay_rate=0.995, backup_interval=10, val_interval=10, batch_size=1):
+def train_with_val(train_data_dir, val_data_dir, model, loss_functions, loss_weights, init_lr, max_epoch,
+                   training_regions='overlapping', eval_regions='overlapping', out_dir=None, decay_rate=0.995,
+                   backup_interval=10, val_interval=10, batch_size=1):
     """Runs training routine with validation on separate validation set.
     Args:
         train_data_dir: Directory of training data.
@@ -77,7 +80,10 @@ def train_with_val(train_data_dir, val_data_dir, model, loss_functions, loss_wei
     optimizer = optim.Adam(model.parameters(), lr=init_lr, weight_decay=0, amsgrad=True)
 
     # Check if training for first time or continuing from a saved checkpoint.
-    epoch_start, best_vloss, best_dice = load_or_initialize_training(model, optimizer, latest_ckpt_path, train_with_val=True)
+    epoch_start, best_vloss, best_dice = load_or_initialize_training(
+        model, optimizer,
+        latest_ckpt_path, train_with_val=True
+    )
 
     train_loader = make_dataloader(train_data_dir, shuffle=True, mode='train', batch_size=batch_size)
     val_loader = make_dataloader(val_data_dir, shuffle=False, mode='train', batch_size=batch_size)
@@ -89,7 +95,10 @@ def train_with_val(train_data_dir, val_data_dir, model, loss_functions, loss_wei
 
         exp_decay_learning_rate(optimizer, epoch, init_lr, decay_rate)
 
-        average_epoch_loss = train_one_epoch(model, optimizer, train_loader, loss_functions, loss_weights, training_regions)
+        average_epoch_loss = train_one_epoch(
+            model, optimizer, train_loader,
+            loss_functions, loss_weights, training_regions
+        )
 
         # Report loss from the epoch.
         print(f'Epoch {epoch} completed. Average loss = {average_epoch_loss:.4f}.')
@@ -175,7 +184,10 @@ def train_with_val(train_data_dir, val_data_dir, model, loss_functions, loss_wei
                 update_dice = True
 
             # Save training loss and validation loss and metrics.
-            save_loss_and_metrics_csv(loss_and_metrics_path, epoch, average_epoch_loss, average_val_loss, mean_dice, eval_region_dice_scores)
+            save_loss_and_metrics_csv(
+                loss_and_metrics_path, epoch, average_epoch_loss, average_val_loss,
+                mean_dice, eval_region_dice_scores
+            )
 
         print('Saving model checkpoint...')
 
