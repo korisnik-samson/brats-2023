@@ -68,11 +68,12 @@ class GradiendEdge3D():
     def __init__(self, n1=1, n2=2, n3=2, device='cuda:0'):
         super(GradiendEdge3D, self).__init__()
         self.device = device
-        k_sobel = 3
 
+        k_sobel = 3
         S = get_sobel_kernel_3d(n1, n2, n3)
 
-        self.sobel_filters = []
+        # self.sobel_filters = []
+        self.sobel_filters = nn.ModuleList()
 
         for s in S:
             sobel_filter = nn.Conv3d(
@@ -164,5 +165,5 @@ if __name__ == "__main__":
 
             plt.show()
 
-    print('test_loss =', loss(x, x + 0.001 *
-                              torch.rand(x.shape).to(device=device, dtype=torch.float)))
+    if 'x' in locals():
+        print('test_loss =', loss(x, x + 0.001 * torch.rand(x.shape).to(device=device, dtype=torch.float)))

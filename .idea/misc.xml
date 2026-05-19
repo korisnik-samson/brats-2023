@@ -3,4 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="machine-learning-env" />
   </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="SSH (sftp://samofforjindu_lfis@35.204.24.126:22/home/samofforjindu_lfis/anaconda3/envs/brats-env/bin/python)" project-jdk-type="Python SDK" />
 </project>

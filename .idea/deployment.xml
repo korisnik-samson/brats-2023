@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="samofforjindu_lfis@35.204.24.126:22 key (2)" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="sammi@35.204.24.126:22 key">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_36d2fe75" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="sammi@35.204.24.126:22 key (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_36d2fe75" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="samofforjindu_lfis@35.204.24.126:22 key">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_36d2fe75" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="samofforjindu_lfis@35.204.24.126:22 key (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_36d2fe75" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>
