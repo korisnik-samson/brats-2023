@@ -62,17 +62,16 @@ def get_sobel_kernel_3d(n1=3, n2=3, n3=2):
     return [Sx, Sy, Sz, Sd11, Sd12, Sd21, Sd22, Sd31, Sd32]
 
 
-class GradiendEdge3D():
+class GradiendEdge3D(nn.Module):
     """Sobel edge detection algorithm compatible with pytorch autograd engine"""
 
-    def __init__(self, n1=1, n2=2, n3=2, device='cuda:0'):
+    def __init__(self, n1=1, n2=2, n3=2):
         super(GradiendEdge3D, self).__init__()
-        self.device = device
         k_sobel = 3
 
         S = get_sobel_kernel_3d(n1, n2, n3)
 
-        self.sobel_filters = []
+        self.sobel_filters = nn.ModuleList()
 
         for s in S:
             sobel_filter = nn.Conv3d(
@@ -82,8 +81,8 @@ class GradiendEdge3D():
 
             sobel_filter.weight.data = torch.from_numpy(
                 s.astype(np.float32)).reshape(1, 1, k_sobel, k_sobel, k_sobel)
+            sobel_filter.weight.requires_grad = False  # Fixed kernels
 
-            sobel_filter = sobel_filter.to(device, dtype=torch.float32)
             self.sobel_filters.append(sobel_filter)
 
     def detect(self, img, a=1):
@@ -105,6 +104,8 @@ class GradiendEdge3D():
 
         img = nn.functional.pad(img, pad, mode='reflect')
 
+        # Run each sobel filter and compute magnitude
+        # We cat along channels for each modality, then sum/stack across filters
         grad_mag = (1 / C) * torch.sum(torch.stack([
             torch.sum(torch.cat([s(img[:, c : c + 1]) for c in range(C)], dim=1) + EPSILON, dim=1) ** 2 for s in self.sobel_filters
         ], dim=1) + EPSILON, dim=1) ** 0.5
@@ -119,9 +120,9 @@ class GMELoss3D(nn.Module):
     3D-Edge Loss for PyTorch with choice of criterion. Default is MSELoss.
     '''
 
-    def __init__(self, criterion=losses.NCCLoss(), n1=1, n2=2, n3=2, device='cuda:0'):
+    def __init__(self, criterion=losses.NCCLoss(), n1=1, n2=2, n3=2):
         super(GMELoss3D, self).__init__()
-        self.edge_filter = GradiendEdge3D(n1, n2, n3, device)
+        self.edge_filter = GradiendEdge3D(n1, n2, n3)
         self.criterion = criterion
 
     def forward(self, y, yp):
@@ -132,14 +133,17 @@ class GMELoss3D(nn.Module):
 
 
 if __name__ == "__main__":
-    device = 'cuda'
-    loss = GMELoss3D(device=device)
-    filter_ = GradiendEdge3D(n1=1, n2=2, n3=2, device=device)
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    loss = GMELoss3D().to(device)
+    filter_ = GradiendEdge3D(n1=1, n2=2, n3=2).to(device)
 
     plt.rcParams['figure.dpi'] = 150
 
     for k in range(1, 5):
+        # This is a placeholder path from the original code
         path = 'R:/img (%d).pkl' % (k)
+        if not os.path.exists(path):
+            continue
 
         # T1 and T2 combined(ie- 2 channel input). For single channel add [0:1] to the line after calling np.load
         data = np.load(path, allow_pickle=True)
@@ -164,5 +168,7 @@ if __name__ == "__main__":
 
             plt.show()
 
-    print('test_loss =', loss(x, x + 0.001 *
-                              torch.rand(x.shape).to(device=device, dtype=torch.float)))
+    # Small test if x exists
+    if 'x' in locals():
+        print('test_loss =', loss(x, x + 0.001 *
+                                  torch.rand(x.shape).to(device=device, dtype=torch.float)))

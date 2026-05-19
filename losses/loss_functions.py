@@ -35,8 +35,14 @@ class FocalLoss(nn.Module):
         inputs = inputs.view(-1)
         targets = targets.view(-1)
 
-        BCE = Functional.binary_cross_entropy(inputs, targets, reduction='mean')
-        BCE_EXP = torch.exp(-BCE)
+        # Use BCE with logits for numerical stability
+        BCE = Functional.binary_cross_entropy_with_logits(inputs, targets, reduction='mean')
+        
+        # Focal factor requires probabilities
+        inputs_prob = torch.sigmoid(inputs)
+        BCE_EXP = torch.exp(-BCE) # This is p_t if we use BCE
+        
+        # Standard focal loss formula: alpha * (1 - p_t)^gamma * BCE
         focal_loss = alpha * (1 - BCE_EXP) ** gamma * BCE
 
         return focal_loss

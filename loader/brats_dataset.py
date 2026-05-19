@@ -166,6 +166,7 @@ class BraTSDataset(Dataset):
         cache_dir: Optional[Union[str, Path]] = None,
         crop_target: Tuple[int, int, int] = DEFAULT_CROP_TARGET,
         require_seg: Optional[bool] = None,
+        do_crop: bool = True,
     ):
         super().__init__()
 
@@ -177,6 +178,7 @@ class BraTSDataset(Dataset):
         self.transform   = transform
         self.cache_dir   = Path(cache_dir) if cache_dir else None
         self.crop_target = tuple(crop_target)
+        self.do_crop     = do_crop
 
         if self.challenge not in CHALLENGE_PREFIXES:
             raise ValueError(
@@ -404,23 +406,32 @@ class BraTSDataset(Dataset):
         for arr in raw.values():
             union_mask |= (arr > 0)
 
-        coords = _compute_crop_coords(union_mask, self.crop_target)
+        # ── 4. Normalise each modality independently ──────────────────────────
+        # Spatial consistency: if do_crop is True, apply shared foreground crop.
+        # Otherwise, keep full volume.
+        coords = None
+        if self.do_crop:
+            coords = _compute_crop_coords(union_mask, self.crop_target)
 
-        # ── 4. Normalise each modality independently, then apply shared crop ──
         processed: List[np.ndarray] = []
         for mod in MODALITIES:
             normed  = _znorm(raw[mod])           # intensity normalisation
-            cropped = coords.apply(normed)       # spatial crop  (same window)
-            padded  = _pad_to_shape(cropped, self.crop_target)  # pad if needed
-            processed.append(padded)
+            if coords:
+                normed = coords.apply(normed)    # spatial crop
+                normed = _pad_to_shape(normed, self.crop_target)
+            processed.append(normed)
 
         stacked_image = np.stack(processed, axis=0).astype(np.float32)  # (4,H,W,D)
 
-        # ── 5. Crop segmentation with the SAME coordinates ────────────────────
+        # ── 5. Process segmentation ───────────────────────────────────────────
         seg: Optional[np.ndarray] = None
         if seg_raw is not None:
-            seg_cropped = coords.apply(seg_raw)
-            seg = _pad_to_shape(seg_cropped, self.crop_target).astype(np.float32)
+            if coords:
+                seg_raw = coords.apply(seg_raw)
+                seg = _pad_to_shape(seg_raw, self.crop_target)
+            else:
+                seg = seg_raw
+            seg = seg.astype(np.float32)
 
         return stacked_image, seg
 

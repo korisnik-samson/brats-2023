@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from ..datasets import brats_dataset
+from ..loader import brats_dataset
 from .general_utils import seg_to_one_hot_channels, disjoint_to_overlapping
 
 def load_or_initialize_training(model, optimizer, latest_ckpt_path, train_with_val=False):
@@ -49,9 +49,9 @@ def load_or_initialize_training(model, optimizer, latest_ckpt_path, train_with_v
 
     return epoch_start
 
-def make_dataloader(data_dir, shuffle, mode, batch_size=1):
+def make_dataloader(data_dir, shuffle, mode, batch_size=1, do_crop=True):
     """Creates dataloader for provided data directory."""
-    dataset = brats_dataset.BratsDataset(data_dir, mode=mode)
+    dataset = brats_dataset.BraTSDataset(data_dir, mode=mode, do_crop=do_crop)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=1, pin_memory=True)
 
     return dataloader
@@ -63,7 +63,7 @@ def exp_decay_learning_rate(optimizer, epoch, init_lr, decay_rate):
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
 
-def compute_loss(output, seg, loss_functs, loss_weights):
+def compute_loss(output, seg, loss_functs, loss_weights, device):
     """Computes weighted loss between model output and ground truth, summed across each region."""
     loss = 0.
 
@@ -71,13 +71,14 @@ def compute_loss(output, seg, loss_functs, loss_weights):
         temp = 0
 
         for i in range(3):
-            temp += loss_function(output[:,i:i+1].cuda(), seg[:, i : i+1].cuda())
+            # No need to call .to(device) again if output and seg are already there
+            temp += loss_function(output[:,i:i+1], seg[:, i : i+1])
 
         loss += temp * loss_weights[n]
 
     return loss
 
-def train_one_epoch(model, optimizer, train_loader, loss_functions, loss_weights, training_regions):
+def train_one_epoch(model, optimizer, train_loader, loss_functions, loss_weights, training_regions, device):
     """Performs one training loop of model according to given optimizer, loss functions and associated weights.
     Args:
         model: The PyTorch model to be trained.
@@ -86,6 +87,7 @@ def train_one_epoch(model, optimizer, train_loader, loss_functions, loss_weights
         loss_functions: List of loss functions.
         loss_weights: List of associated weightings for each loss function.
         training_regions: String specifying whether 'disjoint' or 'overlapping' regions will be used for training.
+        device: The torch.device to use for training.
     Returns:
         The average training loss over the epoch.
     """
@@ -95,9 +97,9 @@ def train_one_epoch(model, optimizer, train_loader, loss_functions, loss_weights
 
         model.train()
 
-        # Move data to GPU.
-        imgs = [img.cuda() for img in imgs] # img is B1HWD
-        seg = seg.cuda()
+        # Move data to target device.
+        imgs = [img.to(device) for img in imgs] # img is B1HWD
+        seg = seg.to(device)
 
         # Split segmentation into 3 channels.
         seg = seg_to_one_hot_channels(seg)
@@ -112,7 +114,7 @@ def train_one_epoch(model, optimizer, train_loader, loss_functions, loss_weights
         output = output.float()
 
         # Compute weighted loss, summed across each region.
-        loss = compute_loss(output, seg, loss_functions, loss_weights)
+        loss = compute_loss(output, seg, loss_functions, loss_weights, device)
 
         optimizer.zero_grad()
         loss.backward()

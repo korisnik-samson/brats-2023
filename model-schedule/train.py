@@ -7,7 +7,7 @@ import csv
 from ..utils.model_utils import load_or_initialize_training, make_dataloader, exp_decay_learning_rate, train_one_epoch
 
 def train(data_dir, model, loss_functions, loss_weights, init_lr, max_epoch, training_regions='overlapping',
-          out_dir=None, decay_rate=0.995, backup_interval=10, batch_size=1):
+          out_dir=None, decay_rate=0.995, backup_interval=10, batch_size=1, device=None):
     """Runs basic training routine.
     Args:
         data_dir: Directory of training data.
@@ -21,7 +21,15 @@ def train(data_dir, model, loss_functions, loss_weights, init_lr, max_epoch, tra
         decay_rate: Rate at which to decay the learning rate. Defaults to 0.995.
         backup_interval: How often to save a backup checkpoint. Defaults to 10.
         batch_size: Batch size of dataloader. Defaults to 1.
+        device: torch.device to use. If None, auto-detects.
     """
+    # Device management
+    if device is None:
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+    model = model.to(device)
+    loss_functions = [lf.to(device) for lf in loss_functions]
+
     # Set up directories and paths.
     if out_dir is None:
         out_dir = os.getcwd()
@@ -37,6 +45,7 @@ def train(data_dir, model, loss_functions, loss_weights, init_lr, max_epoch, tra
     print("---------------------------------------------------")
     print(f"TRAINING SUMMARY")
     print(f"Data directory: {data_dir}")
+    print(f"Device: {device}")
     print(f"Model: {model}")
     print(f"Loss functions: {loss_functions}")
     print(f"Loss weights: {loss_weights}")
@@ -63,7 +72,7 @@ def train(data_dir, model, loss_functions, loss_weights, init_lr, max_epoch, tra
 
         exp_decay_learning_rate(optimizer, epoch, init_lr, decay_rate)
 
-        average_epoch_loss = train_one_epoch(model, optimizer, train_loader, loss_functions, loss_weights, training_regions)
+        average_epoch_loss = train_one_epoch(model, optimizer, train_loader, loss_functions, loss_weights, training_regions, device)
 
         # Save and report loss from the epoch.
         save_tloss_csv(training_loss_path, epoch, average_epoch_loss)
