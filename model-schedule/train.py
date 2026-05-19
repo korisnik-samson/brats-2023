@@ -7,7 +7,7 @@ import csv
 from ..utils.model_utils import load_or_initialize_training, make_dataloader, exp_decay_learning_rate, train_one_epoch
 
 def train(data_dir, model, loss_functions, loss_weights, init_lr, max_epoch, training_regions='overlapping',
-          out_dir=None, decay_rate=0.995, backup_interval=10, batch_size=1, device=None):
+          out_dir=None, decay_rate=0.995, backup_interval=10, batch_size=1, device=None, transform=None):
     """Runs basic training routine.
     Args:
         data_dir: Directory of training data.
@@ -22,6 +22,7 @@ def train(data_dir, model, loss_functions, loss_weights, init_lr, max_epoch, tra
         backup_interval: How often to save a backup checkpoint. Defaults to 10.
         batch_size: Batch size of dataloader. Defaults to 1.
         device: torch.device to use. If None, auto-detects.
+        transform: MONAI transforms to apply to the dataset.
     """
     # Device management
     if device is None:
@@ -56,6 +57,7 @@ def train(data_dir, model, loss_functions, loss_weights, init_lr, max_epoch, tra
     print(f"Decay rate: {decay_rate}")
     print(f"Backup interval: {backup_interval}")
     print(f"Batch size: {batch_size}")
+    print(f"Augmentations: {transform is not None}")
     print("---------------------------------------------------")
 
     optimizer = optim.Adam(model.parameters(), lr=init_lr, weight_decay=0, amsgrad=True)
@@ -63,7 +65,7 @@ def train(data_dir, model, loss_functions, loss_weights, init_lr, max_epoch, tra
     # Check if training for first time or continuing from a saved checkpoint.
     epoch_start = load_or_initialize_training(model, optimizer, latest_ckpt_path)
 
-    train_loader = make_dataloader(data_dir, shuffle=True, mode='train', batch_size=batch_size)
+    train_loader = make_dataloader(data_dir, shuffle=True, mode='train', batch_size=batch_size, transform=transform)
 
     print('Training starts.\n')
 

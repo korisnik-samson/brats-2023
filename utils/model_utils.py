@@ -49,9 +49,9 @@ def load_or_initialize_training(model, optimizer, latest_ckpt_path, train_with_v
 
     return epoch_start
 
-def make_dataloader(data_dir, shuffle, mode, batch_size=1, do_crop=True):
+def make_dataloader(data_dir, shuffle, mode, batch_size=1, do_crop=True, transform=None):
     """Creates dataloader for provided data directory."""
-    dataset = brats_dataset.BraTSDataset(data_dir, mode=mode, do_crop=do_crop)
+    dataset = brats_dataset.BraTSDataset(data_dir, mode=mode, do_crop=do_crop, transform=transform)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=1, pin_memory=True)
 
     return dataloader
