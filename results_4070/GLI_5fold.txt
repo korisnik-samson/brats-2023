@@ -1,0 +1,19 @@
+GLI — 4-fold cross-validation (Swin UNETR), RTX 4070 (12 GB)
+Config : batch_size 1, gradient checkpointing ON, num_workers 0, 300 epochs/fold
+Eval   : evaluate_fullvol.py (full-volume; voxel + lesion-wise)
+Folds  : 4 folds (0-3), 1003 subjects (fold 4 not completed before submission)
+
+=== 4-fold aggregate (mean +/- std) ===
+metric                    WT              TC              ET      mean
+voxel DSC        0.934+/-0.070   0.911+/-0.152   0.874+/-0.186   0.907
+lesion DSC       0.750+/-0.278   0.827+/-0.245   0.789+/-0.266   0.789
+voxel HD95       7.000           4.629           3.300           4.976
+lesion HD95     74.576          39.022          46.207          53.269
+
+Per-fold mean DSC (voxel / lesion):
+  fold 0: 0.916 / 0.793   fold 1: 0.902 / 0.780   fold 2: 0.903 / 0.799   fold 3: 0.906 / 0.784
+
+Notes:
+- Very low fold variance (voxel 0.902-0.916) -> 4 folds is a stable estimate.
+- 4-fold == 3-fold to within 0.001 (0.907 voxel / 0.789 lesion), confirming stability.
+- Strongest voxel result but expected voxel->lesion drop (0.907 -> 0.789).

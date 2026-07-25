@@ -3,11 +3,11 @@ import numpy as np
 import torch
 from monai.metrics import HausdorffDistanceMetric, DiceMetric
 
-from ..utils.model_utils import make_dataloader, compute_loss
-from ..utils.general_utils import seg_to_one_hot_channels, disjoint_to_overlapping, probs_to_preds, one_hot_channels_to_three_labels
-from ..processing.plot import plot_slices
+from utils.model_utils import make_dataloader, compute_loss
+from utils.general_utils import seg_to_one_hot_channels, disjoint_to_overlapping, probs_to_preds, one_hot_channels_to_three_labels
+from processing.plot import plot_slices
 
-def validate(data_dir, ckpt_path, eval_regions='overlapping', out_dir=None, make_plots=False, batch_size=1):
+def validate(data_dir, ckpt_path, eval_regions='overlapping', out_dir=None, make_plots=False, batch_size=1, device='cuda'):
     """Routine to validate a trained model on validation data. Optionally plots predictions against ground truth segmentations.
     Args:
         data_dir: Directory of validation data.
@@ -18,6 +18,9 @@ def validate(data_dir, ckpt_path, eval_regions='overlapping', out_dir=None, make
         batch_size: Batch size of dataloader. Defaults to 1.
     """
     # Set up directories.
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
     if out_dir is None:
         out_dir = os.getcwd()
 
@@ -29,10 +32,11 @@ def validate(data_dir, ckpt_path, eval_regions='overlapping', out_dir=None, make
             os.system(f'chmod a+rwx {plots_dir}')
 
     print(f"Loading model from {ckpt_path}...")
-    checkpoint = torch.load(ckpt_path)
+    checkpoint = torch.load(ckpt_path, map_location=device)
 
     model = checkpoint['model']
-    loss_functions = checkpoint['loss_functions']
+    loss_functions = [lf.to(device) for lf in checkpoint['loss_functions']]
+
     loss_weights = checkpoint['loss_weights']
     training_regions = checkpoint['training_regions']
 
@@ -43,7 +47,7 @@ def validate(data_dir, ckpt_path, eval_regions='overlapping', out_dir=None, make
 
     print('Model loaded.')
 
-    print(f"{"-" * 50}")
+    print(f"{'-' * 50}")
     print(f"TRAINING SUMMARY")
     print(f"Model: {model}")
     print(f"Loss functions: {loss_functions}")
@@ -51,7 +55,7 @@ def validate(data_dir, ckpt_path, eval_regions='overlapping', out_dir=None, make
     print(f"Training regions: {training_regions}")
     print(f"Epochs trained: {epoch}")
 
-    print(f"{"-" * 50}")
+    print(f"{'-' * 50}")
     print("VALIDATION SUMMARY")
     print(f"Data directory: {data_dir}")
     print(f"Trained model checkpoint path: {ckpt_path}")
@@ -59,15 +63,18 @@ def validate(data_dir, ckpt_path, eval_regions='overlapping', out_dir=None, make
     print(f"Out directory: {out_dir}")
     print(f"Make plots: {make_plots}")
     print(f"Batch size: {batch_size}")
-    print(f"{"=" * 50}")
+    print(f"{'=' * 50}")
 
-    val_loader = make_dataloader(data_dir, shuffle=False, mode='train', batch_size=batch_size)
+    val_loader = make_dataloader(data_dir, shuffle=False, mode='train', batch_size=batch_size, do_crop=False)
 
     val_loss_vals = []
 
     # Recommend use MONAI metrics set-up for different metrics (Cumulative Iterative)
     dice_metric = DiceMetric(include_background=True, reduction="mean_batch")
     hd_metric = HausdorffDistanceMetric(include_background=True, percentile=95, reduction="mean_batch")
+
+    roi_size = (192, 192, 128)
+    sw_batch_size = 4
 
     print('Validation starts.')
     with torch.no_grad():
@@ -76,8 +83,8 @@ def validate(data_dir, ckpt_path, eval_regions='overlapping', out_dir=None, make
             model.eval()
 
             # Move data to GPU.
-            imgs = [img.cuda() for img in imgs] # img is B1HWD
-            seg = seg.cuda()
+            imgs = [img.to(device) for img in imgs] # img is B1HWD
+            seg = seg.to(device)
 
             # Split segmentation into 3 channels.
             seg = seg_to_one_hot_channels(seg) # seg is B3HWD
@@ -97,7 +104,8 @@ def validate(data_dir, ckpt_path, eval_regions='overlapping', out_dir=None, make
             val_loss = compute_loss(output, seg_train, loss_functions, loss_weights)
             val_loss_vals.append(val_loss.detach().cpu())
 
-            preds = probs_to_preds(output, training_regions)
+            probas = torch.sigmoid(output)
+            preds = probs_to_preds(probas, training_regions)
             eval_region_names = []
 
             if eval_regions == 'overlapping':

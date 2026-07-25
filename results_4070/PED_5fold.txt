@@ -1,0 +1,34 @@
+PED — 5-fold cross-validation (Swin UNETR)
+Machine : local RTX 4070 (12 GB)
+Config  : batch_size 1, gradient checkpointing ON, num_workers 0, 300 epochs/fold
+Eval    : evaluate_fullvol.py (full-volume, brain-space; voxel + lesion-wise)
+Folds   : 5 folds, 99 subjects total (run_cv.ps1 -Challenge PED)
+
+=== 5-fold aggregate (mean +/- std over 99 subjects) ===
+metric                    WT              TC              ET      mean
+voxel DSC        0.831+/-0.182   0.802+/-0.212   0.520+/-0.364   0.718
+lesion DSC       0.431+/-0.276   0.537+/-0.312   0.421+/-0.360   0.463
+voxel HD95     20.086+/-21.980 12.212+/-14.456 14.801+/-17.614  15.700
+lesion HD95   192.987         136.539         160.445          163.324
+
+=== per-fold mean DSC (voxel / lesion) ===
+  fold 0 (n=22):  voxel 0.686  |  lesion 0.447
+  fold 1 (n=21):  voxel 0.666  |  lesion 0.433
+  fold 2 (n=20):  voxel 0.756  |  lesion 0.489
+  fold 3 (n=18):  voxel 0.766  |  lesion 0.462
+  fold 4 (n=18):  voxel 0.727  |  lesion 0.489
+
+=== per-fold, per-region full-volume DSC / HD95 ===
+fold 0  WT v0.8057 h21.15 L0.4588 | TC v0.7621 h15.04 L0.5096 | ET v0.4889 h13.59 L0.3732
+fold 1  WT v0.7636 h24.41 L0.4257 | TC v0.7501 h10.59 L0.5055 | ET v0.4830 h13.16 L0.3687
+fold 2  WT v0.8197 h17.37 L0.4803 | TC v0.8308 h15.65 L0.5300 | ET v0.6184 h20.27 L0.4553
+fold 3  WT v0.8975 h10.57 L0.3829 | TC v0.8122 h 9.63 L0.4503 | ET v0.5897 h 8.35 L0.5526
+fold 4  WT v0.8881 h26.32 L0.3965 | TC v0.8683 h 9.47 L0.7003 | ET v0.4233 h18.29 L0.3712
+
+Notes:
+- Single fold-0 voxel mean (0.686) UNDERESTIMATES the 5-fold mean (0.718).
+- Fold-to-fold spread 0.666-0.766 (~0.10) confirms why CV matters on 99 cases.
+- ET remains bimodal/high-variance (0.520 +/- 0.364): segmented well when present,
+  near-zero on the many PED cases with minimal/absent enhancement (11/99 have no ET).
+- Per-subject CSVs: output/PED_swin_fold{0..4}/val_fullvol_fold{F}_epoch300.csv
+- Pair with the L4 PED 5-fold run for the cross-hardware reproducibility comparison.

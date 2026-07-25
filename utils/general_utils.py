@@ -4,7 +4,7 @@ import torch
 import numpy as np
 import nibabel as nib
 import os
-from ..processing.preprocess import undo_center_crop
+from processing.preprocess import undo_center_crop
 
 def seg_to_one_hot_channels(seg):
     """Converts segmentation to 3 channels, each a one-hot encoding of a tumour region label.
@@ -13,8 +13,11 @@ def seg_to_one_hot_channels(seg):
     Returns:
         Tensor of shape B3HWD, where each channel is one-hot encoding of a disjoint region.
     """
-    B, _, H, W, D = seg.shape
-    seg3 = torch.zeros((B, 3, H, W, D))
+    # Accept either B1HWD (channel-of-1) or BHWD and normalise to BHWD labels.
+    if seg.dim() == 5:
+        seg = seg[:, 0]
+    B, H, W, D = seg.shape
+    seg3 = torch.zeros((B, 3, H, W, D), device=seg.device)
     for channel_value in [1, 2, 3]:
         seg3[:, channel_value - 1, :, :, :] = (seg == channel_value).type(torch.float)
     return seg3

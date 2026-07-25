@@ -2,7 +2,6 @@
 
 import torch
 import torch.nn as nn
-from nni.common import device
 
 
 # instance norm
@@ -83,7 +82,7 @@ class UNet3D(nn.Module):
         self.Up_conv1 = conv_block(ch_in=nf*4, ch_out1=nf*2,ch_out2=nf*2, k1=3, k2=3, s1=1, s2=1).to(device=device)
         self.Conv_1x11 = nn.Conv3d(nf*2,output_ch, kernel_size=1, stride=1, padding=0).to(device=device)
 
-        self.Sig =nn.Sigmoid().to(device=device)
+        # self.Sig =nn.Sigmoid().to(device=device)
 
 
     def forward(self, x, device='cuda:0'):
@@ -122,22 +121,22 @@ class UNet3D(nn.Module):
         d3 = torch.cat((x3.to(device=device), d3),dim=1)
         d3 = self.Up_conv3(d3)
         d3 = self.Conv_1x13(d3)
-        d3 = self.Sig(d3)
+        # d3 = self.Sig(d3)
 
         d2 = self.Up2(d3)
         d2 = torch.cat((x2.to(device=device), d2),dim=1)
         d2 = self.Up_conv2(d2)
         d2 = self.Conv_1x12(d2)
-        d2 = self.Sig(d2)
+        # d2 = self.Sig(d2)
 
         d1 = self.Up1(d2)
         d1 = torch.cat((x1.to(device=device),d1),dim=1)
         d1 = self.Up_conv1(d1)
         d1 = self.Conv_1x11(d1)
-        d1 = self.Sig(d1)
+        # d1 = self.Sig(d1)
 
-        return d1.to(device='cuda:1')
+        return d1.to(device='cuda:0')
 
     def __str__(self):
         num_params = sum(p.numel() for p in self.parameters())
-        return f"UNet_3D (with {num_params:, } parameters)"
+        return f"UNet_3D (with {num_params:,} parameters)"

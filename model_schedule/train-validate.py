@@ -5,9 +5,9 @@ from torch import optim
 import csv
 from monai.metrics import DiceMetric
 
-from ..utils.model_utils import (load_or_initialize_training, make_dataloader, exp_decay_learning_rate, compute_loss,
+from utils.model_utils import (load_or_initialize_training, make_dataloader, exp_decay_learning_rate, compute_loss,
                                  train_one_epoch)
-from ..utils.general_utils import seg_to_one_hot_channels, disjoint_to_overlapping, probs_to_preds
+from utils.general_utils import seg_to_one_hot_channels, disjoint_to_overlapping, probs_to_preds
 
 def train_with_val(train_data_dir, val_data_dir, model, loss_functions, loss_weights, init_lr, max_epoch,
                    training_regions='overlapping', eval_regions='overlapping', out_dir=None, decay_rate=0.995,

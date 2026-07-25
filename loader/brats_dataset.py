@@ -41,6 +41,7 @@ that the network depends on.
 """
 
 import json
+import os
 import logging
 import warnings
 from dataclasses import dataclass
@@ -166,6 +167,7 @@ class BraTSDataset(Dataset):
         cache_dir: Optional[Union[str, Path]] = None,
         crop_target: Tuple[int, int, int] = DEFAULT_CROP_TARGET,
         require_seg: Optional[bool] = None,
+        do_crop: bool = True
     ):
         super().__init__()
 
@@ -177,6 +179,7 @@ class BraTSDataset(Dataset):
         self.transform   = transform
         self.cache_dir   = Path(cache_dir) if cache_dir else None
         self.crop_target = tuple(crop_target)
+        do_crop          = bool(do_crop)
 
         if self.challenge not in CHALLENGE_PREFIXES:
             raise ValueError(
@@ -340,9 +343,18 @@ class BraTSDataset(Dataset):
     def __getitem__(self, idx: int):
         name = self.subjects[idx]
 
-        # Fast path: skip NIfTI I/O entirely if cache exists
+        # Fast path: skip NIfTI I/O entirely if cache exists. If a cache file is
+        # corrupt/truncated (e.g. a worker was killed mid-write by an OOM), drop it
+        # and fall through to reprocessing rather than crashing the whole run.
         if self.cache_dir and self._cache_path(name).exists():
-            return self._load_from_cache(name)
+            try:
+                return self._load_from_cache(name)
+            except Exception as exc:
+                logger.warning("Corrupt cache for %s (%s); reprocessing.", name, exc)
+                try:
+                    self._cache_path(name).unlink()
+                except OSError:
+                    pass
 
         # Full pipeline: load raw NIfTI → preprocess → crop
         try:
@@ -407,20 +419,33 @@ class BraTSDataset(Dataset):
         coords = _compute_crop_coords(union_mask, self.crop_target)
 
         # ── 4. Normalise each modality independently, then apply shared crop ──
+        # Spatial consistency: -if do_crop is True, then apply shared foreground cro
+        # Otherwise, keep the full volume
         processed: List[np.ndarray] = []
         for mod in MODALITIES:
-            normed  = _znorm(raw[mod])           # intensity normalisation
-            cropped = coords.apply(normed)       # spatial crop  (same window)
-            padded  = _pad_to_shape(cropped, self.crop_target)  # pad if needed
-            processed.append(padded)
+            normed  = _znorm(raw[mod])            # intensity normalisation
+
+            if coords:
+                normed = coords.apply(normed)
+                normed  = _pad_to_shape(normed, self.crop_target)  # pad if needed
+
+            processed.append(normed)
 
         stacked_image = np.stack(processed, axis=0).astype(np.float32)  # (4,H,W,D)
 
-        # ── 5. Crop segmentation with the SAME coordinates ────────────────────
+        # ── 5. Process segmentation with the SAME coordinates ────────────────────
         seg: Optional[np.ndarray] = None
+
         if seg_raw is not None:
-            seg_cropped = coords.apply(seg_raw)
-            seg = _pad_to_shape(seg_cropped, self.crop_target).astype(np.float32)
+            # seg_cropped = coords.apply(seg_raw)
+            # seg = _pad_to_shape(seg_cropped, self.crop_target).astype(np.float32)
+            if coords:
+                seg_raw = coords.apply(seg_raw)
+                seg = _pad_to_shape(seg_raw, self.crop_target).astype(np.float32)
+            else:
+                seg = seg_raw
+
+            seg = seg.astype(np.float32)
 
         return stacked_image, seg
 
@@ -442,11 +467,20 @@ class BraTSDataset(Dataset):
             # Add channel dim so cache format is (1, H, W, D)
             payload["label"] = torch.from_numpy(seg).unsqueeze(0).float()
 
+        # Write atomically: a worker killed mid-write (e.g. by an OOM) leaves only
+        # the temp file, never a half-written .pt that would later fail to load.
+        final = self._cache_path(name)
+        tmp = final.with_suffix(final.suffix + f".tmp{os.getpid()}")
         try:
-            torch.save(payload, self._cache_path(name))
+            torch.save(payload, tmp)
+            os.replace(tmp, final)
         except Exception as exc:
-            # Non-fatal: log and continue training without caching this subject
             logger.warning("Cache write failed for %s: %s", name, exc)
+            try:
+                if tmp.exists():
+                    tmp.unlink()
+            except OSError:
+                pass
 
     def _load_from_cache(self, name: str):
         """Load a cached subject and apply transforms."""

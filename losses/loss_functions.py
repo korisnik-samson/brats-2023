@@ -16,8 +16,8 @@ class DiceLoss(nn.Module):
         inputs = torch.sigmoid(inputs)
 
         # flatten label and prediction tensors
-        inputs = inputs.view(-1)
-        targets = targets.view(-1)
+        inputs = inputs.reshape(-1)
+        targets = targets.reshape(-1)
 
         intersection = (inputs * targets).sum()
         dice = (2. * intersection + smooth) / (inputs.sum() + targets.sum() + smooth)
@@ -32,14 +32,18 @@ class FocalLoss(nn.Module):
 
     def forward(self, inputs, targets, alpha=ALPHA, gamma=GAMMA):
         # flatten the label and prediction tensors
-        inputs = inputs.view(-1)
-        targets = targets.view(-1)
+        inputs = inputs.reshape(-1)
+        targets = targets.reshape(-1)
 
-        BCE = Functional.binary_cross_entropy(inputs, targets, reduction='mean')
+        BCE = Functional.binary_cross_entropy_with_logits(inputs, targets, reduction='mean')
+
+        inputs_proba = torch.sigmoid(inputs)
         BCE_EXP = torch.exp(-BCE)
+
         focal_loss = alpha * (1 - BCE_EXP) ** gamma * BCE
 
         return focal_loss
+
 
 
 class NCCLoss(nn.Module):
@@ -48,8 +52,8 @@ class NCCLoss(nn.Module):
 
     def forward(self, inputs, targets):
         # flatten the label and prediction tensors
-        inputs = inputs.view(-1)
-        targets = targets.view(-1)
+        inputs = inputs.reshape(-1)
+        targets = targets.reshape(-1)
 
         inputs_mean = torch.mean(inputs)
         targets_mean = torch.mean(targets)
@@ -60,6 +64,7 @@ class NCCLoss(nn.Module):
         ncc_loss = 1 - (numerator / denominator)
 
         return ncc_loss
+
 
 
 class NCCLossSimple(nn.Module):

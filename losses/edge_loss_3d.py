@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
-import loss_functions as losses
+from . import loss_functions as losses
 
 EPSILON = 1e-6
 

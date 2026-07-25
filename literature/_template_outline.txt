@@ -1,0 +1,51 @@
+UNIVERZITET SINGIDUNUM
+Departman za poslediplomske studije
+[Title] MASTER RAD
+[Subtitle] NAZIV RADA
+Mentor:Kandidat:
+prof. dr  XXXXXXXXX                                         Samson Offorjindu
+                                                            Beograd, 2026.
+[TOCHeading] Sadržaj
+[TOC1] MASTER RAD- 1 -
+[TOC2] NAZIV RADA- 1 -
+[TOC1] Uvod- 3 -
+[TOC1] Zaključna razmatranja- 5 -
+[TOC1] Literatura- 6 -
+[Heading5] 
+[Heading5] 
+[Title] Uvod
+[BodyText] Molim Vas pročitajte detaljno uputstvo za pisanje master rada u produžetku. Ukoliko rad ne bude urađen po ovim standardima biće vraćen na doradu.
+[BodyText] Osnovna pravila su sledeća: 
+[BodyText] Master rad treba da obuhvati najviše 40 strana originalnog istraživanja i da ima jasan doprinos oblasti u kojoj se vrši istraživanje. U skladu sa obimom rada, uzorak na kome se radi istraživanje ne sme da bude manji od 50 ispitanika. 
+[BodyText] Vaš rad treba da bude formata A4 (290x217) i obavezno otkucan u fontu Times New Roman. Rad možete pisati ćiriličnim ili latiničnim pismom, uz obaveznu upotrebu svih dijakritika (č, ć, ž, đ, š) ukoliko rad kucate latinicom. Veličina slova je 12, dok su veličine slova na naslovnoj stranici, kao i veličine naslova identične onima u zvaničnom template-u master rada.
+[BodyText] Prilikom pisanja koristite akademski stil i standarde srpskog književnog jezika. To znači da obavezno konsultujete važeći pravopis, izbegavate upotrebu slenga (žargona), novinarskog stila i bombastičnih fraza ili kolokvijalnih izraza. Takođe, očekuje se da rad bude izrađen bez slovnih i tehničkih grešaka i da redosled izlaganja u radu bude logičan: od opšteg ka posebnom. Ukoliko rad sadrži pravopisne i gramatičke greške, biće vraćen na doradu. Zato je najbolje na vreme proveriti sve eventualne tehničke i jezičke greške, jer je pored stručnosti, pismenost od ogromnog značaja za Vaš rad.
+[BodyText] Sve reči i fraze koje su na stranom jeziku se formatiraju kao italik (kurziv). Na primer: „Sous vide priprema hrane podrazumeva....“.
+[BodyText] Izuzev gorenavedenog primera, treba izbegavati upotrebu podebljanih slova (bold) ili kurziva (italik) izuzev za nazive poglavlja.
+[BodyText] Strana imena se obavezno transkribuju u zagradi pored navođenja imena i to samo prilikom prvog pominjanja u tekstu. Na primer: „U svom delu, Smit (Smith, 2017) je govorio o...“. 
+[BodyText] Nakon završetka pisanja, svaki kandidat potpisuje Izjavu o autorstvu, kojom preuzima moralnu, materijalnu i krivičnu odgovornost za eventualni falsifikat tuđeg rada ili kršenje Zakona o autorskim i srodnim pravima ili Etičkog kodeksa Univerziteta Singidunum.
+[BodyText] Tekst treba da ima uvučene paragrafe i da bude poravnat po marginama sa obe strane. Svaka stranica osim naslovne treba da ima svoj broj, u središnjem delu u dnu stranice.
+[BodyText] Preporučljivo je da rad pišete u prvom licu množine (Mislimo da je, Smatramo da je i slično). Izuzetno, možete pisati u prvom licu jednine (Mislim, smatram) ili bezlično (misli se, smatra se). Ove stilove pisanja ne bi trebalo bezrazložno kombinovati.
+[BodyText] Rad treba da bude originalni tekst autora. To znači da je najstrože zabranjeno preuzimanje tuđih misli, rečenica ili ideja u celini, a kada se preuzimaju potrebno ih je prepričati i navesti (referenca). Ako uzimate čitavu rečenicu u originalu, onda stavljate znake navoda (kao da je citat). Podrazumeva se naravno, da ne možete imati čitave pasuse pod znacima navoda. Ukoliko se utvrdi da je rad ili deo rada plagijat, odnosno da je preuzet sa interneta ili doslovno prepisan iz literature, biće vraćen na doradu, a sledeća provera na plagijarizam će biti naplaćena.
+[BodyText] Svaki akademski tekst, uključujući i master rad, nužno mora da sadrži spisak korišćene literature. Kandidat MORA navesti literaturu za sve informacije koje nisu njegovo delo, na primer: preuzet tekst, formule, slike, grafike i slično. U literaturi ne smeju da se nađu izmišljene reference. Sve reference koje su citirane u tekstu, treba da se nađu u fusnoti i u spisku literature. Na kraju rada se nalazi spisak svih referenci po abecednom redu, odnosno azbučnom ukoliko je tekst kucan ćirilicom. U suprotnom, rad se kandidatu vraća na doradu, što može zahtevati dodatno vreme i mnogo veće napore nego u slučaju savesnog pisanja master rada.
+[BodyText] Reference se prilikom pisanja navode u fusnotama, i u samom tekstu, kao u sledećem primeru:
+[BodyText] 1. Amad i saradnici (2009) navode da...
+[BodyText] 2. Prema Amadu i saradnicima (2009), ....
+[BodyText] 3. Istraživanje koje je sproveo Amad i saradnici (2009) a koje je imalo za cilj da utvrdi..., pokazalo je da...
+[BodyText] 4. Rezultati nekih istraživanja pokazuju da... (Amad i sar., 2009; Daniels, 2010; Andras i sar., 2010)...
+[BodyText] Za pisanje radova je važno izbegavati internet izvore! Ovo se posebno odnosi na sajtove koji su reklamnog tipa i na tekstove koji nisu autorski i zato mogu sadržati mnogo netačnih informacija. Da biste koristili internet na pravilan način, radove i knjige ćete tražiti na Google scholar-u. Na tom pretraživaču imate mogućnost da podesite i vremenski opseg radova (npr. samo novije radove tražite od 2010.). Nekad je, naravno, neophodno tražiti i navoditi i starije radove, ali potrudite se da imate što više novije literature za svoj rad, kako bi bilo evidentno da je Vaša tema aktuelna i da pratite nove trendove u nauci. Na Google scholar-u ćete ukucati ključne reči koje Vas zanimaju, npr.: spa tourism, wellness tourism,  thermal bath, spa hotels etc. i njihove kombinacije. Neki radovi imaju prikazane samo apstrakte (sažetke) a neki imaju i ceo tekst (imate desno opciju pdf. pored nekih radova, tu je ceo tekst prikazan). Pristup čitavim radovima možete imati preko sajta sci-hub. 
+[BodyText] Kada nađete nešto korisno, najbolje je da otvorite word.doc u kome ćete slagati podatke. Reference odmah čuvajte u ovom dokumentu da se ne biste našli u bezizlaznoj situaciji sa 60 strana teksta i nijednom referencom. Kako ćete zabeležiti reference? Ispod svake stavke koju nađete na Google Scholar-u imate opciju CITE ili CITIRAJ. Kada kliknete na nju imaćete pop-up sa referencom koja je prikazana u tri stila navođenja. Za radove iz društvenih oblasti najpoželjniji je APA stil i najbolje je da njega izaberete. U svakom slučaju, šta god da izaberete treba da se držite jednog stila navođenja, tj. da Vam sve reference budu sređene na jedan način.
+U uvodnom delu, Vaš master rad treba da sadrži osnovne teorijsko-metodološke elemente: predmet i problem istraživanja, osnovne ciljeve (naučni i društveni) koje želite postići pisanjem, kao i metode koje ste koristili prilikom pisanja master rada. 
+Predmet istraživanja je konkretna tema kojom se bavite – npr. Upravljanje ljudskim resursima u hotelu NN ili Uticaj globalne ekonomske krize na turističku ponudu NN države ili Principi pravilne ishrane kod sportista i slično.
+Ciljevi istraživanja zavise od predmeta, tj. od teme Vašeg master rada. Oni mogu biti: naučni i društveni. Naučni cilj pisanja master rada može biti: naučni opis određenog problema, naučno objašnjenje neke pojave ili naučno predviđanje. Društveni cilj je konkretan doprinos koji Vaše istraživanje ima u konkretnoj oblasti društvenog života (npr. poslovanju organizacija, turizmu u Srbiji, radu finansijskih institucija i slično).
+Metode istraživanja koje koristite mogu biti: osnovne (koje se koriste u svim naukama), opštenaučne metode i metode i tehnike prikupljanja podataka. U osnovne metode spadaju osnovne analitičke i sintetičke metode, dok se od opštenaučnih metoda koriste: hipotetičko-deduktivna metoda (postavljanje hipoteza – pretpostavki koje želimo da dokažemo ili opovrgnemo), komparativna (uporedna) metoda, statistička metoda, i druge. Metode i tehnike prikupljanja podataka, u zavisnosti od teme, mogu biti: anketa, upitnik, intervju, posmatranje, eksperiment, analiza sadržaja primarnih ili sekundarnih izvora (npr. analiza pravnih propisa, finansijskih izveštaja, pravilnika, čitanje adekvatne literature i slično), kvantitativne metode (npr. statistička obrada podataka koju smo prikupili).
+[Title] Zaključna razmatranja
+[BodyText] „U svom istraživanju u ovom radu došao/la sam do sledećih važnih nalaza....“ Zaključak treba da bude efektan i ne sme da sadrži reference, jer se u njemu ne navode tuđi stavovi već nalazi istraživanja koje je predstavljeno u radu. U njemu ne treba prepričavati ono što je ranije rečeno, već treba sumirati najvažnije i dati preporuke za dalja istraživanja tog problema. Zaključak, po svom obimu, treba da sadrži najmanje pola, a najviše jednu stranu teksta, u zavisnosti od teme i pristupa samog autora. 
+[BodyText] 
+[BodyText] 
+[Heading1] Literatura
+Holland, M. (1996) HarvardSystem [on-line]. Poole, Bournemouth Universitv. http://bournemouth.ac.uk/service-depts/lis/LIS_Pub/harvardsyst.html (dostupno dana: 15.05.2014.)
+Petrović, Z., Vićentijević, K. i Stanišić, N. (2008) Zbirka zadataka iz računovodstva, drugo izdanje, Univerzitet Singidunum, Beograd
+Pfeffer, J. (1996) When it comes to "best practices" - why do smart organizations do dumb things? Organizational Dvnamics, 25, 33-44
+Stanišić, M. (2014) Revizija, Univerzitet Singidunum, Beograd
+Zakon o računovodstvu i reviziji (Službeni glasnik Republike Srbije br/godina)
+Zakon o autorskim i srodnim pravima (Službeni glasnik Republike Srbije br/godina)

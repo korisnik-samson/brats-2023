@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/data/output" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/old" />
     </content>
-    <orderEntry type="jdk" jdkName="SSH (sftp://samofforjindu_lfis@35.204.24.126:22/home/samofforjindu_lfis/anaconda3/envs/brats-env/bin/python)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="machine-learning-env" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

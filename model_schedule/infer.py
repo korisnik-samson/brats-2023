@@ -1,8 +1,8 @@
 import os
 import torch
 
-from ..utils.model_utils import make_dataloader
-from ..utils.general_utils import probs_to_preds, save_pred_as_nifti
+from utils.model_utils import make_dataloader
+from utils.general_utils import probs_to_preds, save_pred_as_nifti
 
 def infer(data_dir, ckpt_path, out_dir=None, batch_size=1, postprocess_function=None):
     """Uses trained model to make predictions on test data.
@@ -82,7 +82,7 @@ def infer(data_dir, ckpt_path, out_dir=None, batch_size=1, postprocess_function=
 
 if __name__ == '__main__':
 
-    from ..processing.postprocess import rm_dust_fh, OLD_rm_dust_fh
+    from processing.postprocess import rm_dust_fh, OLD_rm_dust_fh
 
     data_dir = '../data'
     ckpt_path = '../data/checkpoints/epoch20.pth.tar'

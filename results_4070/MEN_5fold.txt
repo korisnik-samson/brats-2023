@@ -1,0 +1,29 @@
+MEN — 5-fold cross-validation (Swin UNETR)
+Machine : local RTX 4070 (12 GB)
+Config  : batch_size 1, gradient checkpointing ON, num_workers 0, 300 epochs/fold
+Eval    : evaluate_fullvol.py (full-volume, brain-space; voxel + lesion-wise)
+Folds   : 5 folds, 1000 subjects total
+
+=== 5-fold aggregate (mean +/- std over 1000 subjects) ===
+metric                    WT              TC              ET      mean
+voxel DSC        0.894+/-0.192   0.905+/-0.191   0.909+/-0.186   0.903
+lesion DSC       0.827+/-0.250   0.841+/-0.246   0.847+/-0.242   0.838
+voxel HD95     10.378+/-24.991   9.863+/-24.581  9.368+/-24.210  9.869
+lesion HD95    43.771          41.046          39.362           41.393
+
+=== per-fold mean DSC (voxel / lesion) ===
+  fold 0 (n=201):  voxel 0.897  |  lesion 0.840
+  fold 1 (n=200):  voxel 0.915  |  lesion 0.843
+  fold 2 (n=200):  voxel 0.904  |  lesion 0.843
+  fold 3 (n=200):  voxel 0.897  |  lesion 0.840
+  fold 4 (n=199):  voxel 0.900  |  lesion 0.827
+
+Notes:
+- MEN is the strongest population: ~0.90 voxel / ~0.84 lesion-wise, and unusually
+  even across ALL THREE regions (WT/TC/ET all ~0.90 voxel) - unlike GLI/PED where ET lags.
+- Very low fold variance (voxel 0.897-0.915): the 5-fold mean (0.903) closely matches
+  the single fold-0 thesis number (0.899), i.e. fold-0 was representative for MEN.
+- Small voxel-to-lesion gap (0.065) = clean, well-formed predictions (convex, well-
+  circumscribed extra-axial tumours fragment less than glioma/paediatric ones).
+- Per-subject CSVs: output/MEN_swin_fold{0..4}/val_fullvol_fold{F}_epoch300.csv
+- Pair with the L4 MEN 5-fold run for the cross-hardware reproducibility comparison.
